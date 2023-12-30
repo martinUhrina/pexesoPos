@@ -24,6 +24,7 @@ void clientHandler(int clientSocket) {
         if (strcmp(buffer, "end") == 0) {
             std::cout << "Klient žiada ukončenie spojenia" << std::endl;
             std::cout << "Klient žiada " << std::endl;
+            std::cout << "Klient žiada " << std::endl;
             endConnection = true;
         }
        response = "Komunikujes so serverom";

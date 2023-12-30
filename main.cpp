@@ -10,7 +10,7 @@
 void clientHandler(int clientSocket) {
     char buffer[1024];
     bool endConnection = false;
-    const char* response = "Zadaj ready: ";
+    const char* response = "\n\n1   2   3   4   \na   b   c   d \n\n";
     send(clientSocket, response, strlen(response), 0);
     while (!endConnection) {
         int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
@@ -28,11 +28,11 @@ void clientHandler(int clientSocket) {
 
             endConnection = true;
         }
-       response = "Komunikujes so serverom";
+        response = "Komunikujes so serverom";
         // Odpoved klientovi
         send(clientSocket, response, strlen(response), 0);
     }
-    close(clientSocket);
+    close(clientSocket); //////aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 }
 
 int main() {

@@ -36,6 +36,8 @@ public:
         if (board[row1][col1] == board[row2][col2]) {
             foundPairs.emplace_back(row1, col1);
             foundPairs.emplace_back(row2, col2);
+            board[row1][col1] = '-';
+            board[row2][col2] = '-';
             return true;
         } else {
             revealedPairs.pop_back();

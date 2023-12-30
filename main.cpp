@@ -25,6 +25,7 @@ void clientHandler(int clientSocket) {
             std::cout << "Klient žiada ukončenie spojenia" << std::endl;
             std::cout << "Klient žiada " << std::endl;
             std::cout << "Klient žiada " << std::endl;
+            std::cout << "Klient žiada " << std::endl;
             endConnection = true;
         }
        response = "Komunikujes so serverom";

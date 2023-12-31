@@ -89,13 +89,17 @@ public:
 
         return result;
     }
+
+    void add(char string[1024], int *pInt, int *pInt1) {
+        std::cout<<"KOKOTINAAAA: "<<string;
+    }
 };
 
 void delay(int seconds) {
     std::this_thread::sleep_for(std::chrono::seconds(seconds));
 }
 
-int main() {
+/*int 3main() {
     Pexesso pexesso(5, 4);
     std::cout << pexesso.print();
 
@@ -126,4 +130,4 @@ int main() {
     std::cout << "Všetky páry boli nájdené!\n";
 
     return 0;
-}
+}*/

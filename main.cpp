@@ -4,16 +4,36 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <vector>
+#include <sstream>
 #include <thread>
 #include <cstring>
+#include "pexesso.cpp"
 
-void clientHandler(int clientSocket) {
+void clientHandler(int clientSocket, Pexesso& pexeso) {
     char buffer[1024];
+    int x = 0, y = 0, x2 = 0, y2 = 0;
+    bool druhyTah = false;
     bool endConnection = false;
-    const char* response = "\n\n1   2   3   4   \na   b   c   d \n\n";
-    send(clientSocket, response, strlen(response), 0);
+    int bytesReceived1 = recv(clientSocket, buffer, sizeof(buffer), 0);
+    buffer[bytesReceived1] = '\0';
+    std::cout << "Prijatá správa od klienta: " << buffer << std::endl;
+    std::string response = "\nAhoj\n\n Vitaj v hre pexeso \n Zadaj ready\n\n";
+    send(clientSocket, response.c_str(), response.size(), 0);
+
     while (!endConnection) {
+        memset(buffer, 0, sizeof(buffer));
         int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
+     //   pexeso.add(buffer, &x, &y);
+        std::stringstream ss(buffer);
+        if (druhyTah) {
+            ss >> x2;
+            ss >> y2;
+        }
+        else{
+            ss >> x;
+            ss >> y;
+        }
+        //kontrola pripojenia
         if (bytesReceived <= 0) {
             std::cout << "Klient odpojený" << std::endl;
             break;
@@ -23,19 +43,32 @@ void clientHandler(int clientSocket) {
 
         if (strcmp(buffer, "end") == 0) {
             std::cout << "Klient žiada ukončenie spojenia" << std::endl;
-            std::cout << "Klient žiada " << std::endl;
-            std::cout << "Klient žiada " << std::endl;
-
             endConnection = true;
         }
-        response = "Komunikujes so serverom";
+
+      //logika hry
+        std::cout<<"SUradnice: "<< x << " "<< y<<std::endl;
+        std::cout<<"suradnice: "<< x2 << " "<< y2<<std::endl;
+        pexeso.revealPair(x, y);
+        if (druhyTah){
+            pexeso.makeGuess(x, y, x2, y2);
+            druhyTah = !druhyTah;
+            x2 = 0;
+            y2 = 0;
+            x = 0;
+            y = 0;
+        }
+        response = pexeso.print();
         // Odpoved klientovi
-        send(clientSocket, response, strlen(response), 0);
+        send(clientSocket, response.c_str(), response.size(), 0);
+        druhyTah = !druhyTah;
     }
-    close(clientSocket); //////aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    close(clientSocket);
 }
 
 int main() {
+    Pexesso myPexeso(5,4);
+
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket < 0) {
         std::cerr << "Chyba pri vytváraní socketu";
@@ -63,8 +96,6 @@ int main() {
     time_t current_time = time(nullptr);
 
     while (difftime(current_time, start_time) <= 10) {
-     //   std::cout<<"Start>"<<start_time<<std::endl;
-    //    std::cout<<"Current>"<<current_time<<std::endl;
 
         current_time = time(nullptr);
         if (clientThreads.size() >= 5) {
@@ -82,7 +113,7 @@ int main() {
 
         std::cout << "Nový klient pripojený: " << inet_ntoa(clientAddr.sin_addr) << std::endl;
 
-        clientThreads.emplace_back(clientHandler, clientSocket);
+        clientThreads.emplace_back(clientHandler, clientSocket, std::ref(myPexeso));
     }
 
     for (auto& thread : clientThreads) {

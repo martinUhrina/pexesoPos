@@ -24,11 +24,11 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
 
     while(strcmp(buffer, "hraj") != 0)
     {
-        std::string response = "\n\nAk si pripravey, zadaj ready\n\n";
+        std::string response = "\n\nAk si pripravený, zadaj hraj\n\n";
         send(clientSocket, response.c_str(), response.size(), 0);
         recv(clientSocket, buffer, sizeof(buffer), 0);
         buffer[bytesReceived1] = '\0';
-        std::cout << "Prijata sprava: " << buffer << std::endl;
+        std::cout << "Prijatá sprava: " << buffer << std::endl;
     }
 
 
@@ -66,8 +66,8 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
         }
 
       //logika hry
-        std::cout<<"SUradnice: "<< x << " "<< y<<std::endl;
-        std::cout<<"suradnice: "<< x2 << " "<< y2<<std::endl;
+        std::cout<<"1.súradnice: "<< x << " "<< y<<std::endl;
+        std::cout<<"2.súradnice: "<< x2 << " "<< y2<<std::endl;
         if (druhyTah){
             pexeso.revealPair(x2, y2);
         }else{
@@ -76,12 +76,13 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
 
         if (druhyTah) {
             if (x == x2 && y == y2) {
-                std::cout<<"Zadal si rovnake udaje !\n";
+                std::cout<<"Zadal si rovnaké údaje !\n";
                 pexeso.resetRevealedPairs();
             }
             else {
             if (pexeso.makeGuess(x, y, x2, y2)) {
                 std::cout << "Gratulujem, našiel si zhodu!\n";
+                player.updateScore(2);
             } else {
                 std::cout << "Bohužiaľ, toto nie je zhoda.\n";
                 pexeso.resetRevealedPairs();
@@ -110,7 +111,7 @@ int main() {
 
     sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;               //protokol IPv4
-    serverAddr.sin_port = htons(8080);  // Nastav port
+    serverAddr.sin_port = htons(8081);  // Nastav port
     serverAddr.sin_addr.s_addr = INADDR_ANY;        //
 
     if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {           ///naviaze soceket na adresu a port

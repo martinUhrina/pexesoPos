@@ -8,6 +8,7 @@
 #include <thread>
 #include <cstring>
 #include "pexesso.cpp"
+#include "Player.cpp"
 
 void clientHandler(int clientSocket, Pexesso& pexeso) {
     char buffer[1024];
@@ -16,14 +17,32 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
     bool endConnection = false;
     int bytesReceived1 = recv(clientSocket, buffer, sizeof(buffer), 0);
     buffer[bytesReceived1] = '\0';
-    std::cout << "Prijatá správa od klienta: " << buffer << std::endl;
-    std::string response = "\nAhoj\n\n Vitaj v hre pexeso \n Zadaj ready\n\n";
+    std::cout << "Pripojil sa: " << buffer << std::endl;
+    Player player(buffer);
+    std::string response = "\nAhoj" + player.getName() + "\n\n Vitaj v hre pexeso \n\n";
     send(clientSocket, response.c_str(), response.size(), 0);
 
+    while(strcmp(buffer, "hraj") != 0)
+    {
+        std::string response = "\n\nAk si pripravey, zadaj ready\n\n";
+        send(clientSocket, response.c_str(), response.size(), 0);
+        recv(clientSocket, buffer, sizeof(buffer), 0);
+        buffer[bytesReceived1] = '\0';
+        std::cout << "Prijata sprava: " << buffer << std::endl;
+    }
+
+
     while (!endConnection) {
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+
+        response = pexeso.getPexesso();
+        std::string response1 = pexeso.getPexesso();
+
+        // Odpoved klientovi
+        send(clientSocket, response1.c_str(), response.size(), 0);
+
         memset(buffer, 0, sizeof(buffer));
         int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
-     //   pexeso.add(buffer, &x, &y);
         std::stringstream ss(buffer);
         if (druhyTah) {
             ss >> x2;
@@ -39,7 +58,7 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
             break;
         }
         buffer[bytesReceived] = '\0';
-        std::cout << "Prijatá správa od klienta: " << buffer << std::endl;
+        std::cout << "Prijatá správa od klienta(" + player.getName() +"): " << buffer << std::endl;
 
         if (strcmp(buffer, "end") == 0) {
             std::cout << "Klient žiada ukončenie spojenia" << std::endl;
@@ -49,18 +68,25 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
       //logika hry
         std::cout<<"SUradnice: "<< x << " "<< y<<std::endl;
         std::cout<<"suradnice: "<< x2 << " "<< y2<<std::endl;
-        pexeso.revealPair(x, y);
         if (druhyTah){
-            pexeso.makeGuess(x, y, x2, y2);
-            druhyTah = !druhyTah;
+            pexeso.revealPair(x2, y2);
+        }else{
+            pexeso.revealPair(x, y);
+        }
+
+        if (druhyTah){
+            if (pexeso.makeGuess(x, y, x2, y2)) {
+                std::cout << "Gratulujem, našiel si zhodu!\n";
+            } else {
+                std::cout << "Bohužiaľ, toto nie je zhoda.\n";
+                pexeso.resetRevealedPairs();
+            }
             x2 = 0;
             y2 = 0;
             x = 0;
             y = 0;
         }
-        response = pexeso.print();
-        // Odpoved klientovi
-        send(clientSocket, response.c_str(), response.size(), 0);
+
         druhyTah = !druhyTah;
     }
     close(clientSocket);
@@ -68,6 +94,7 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
 
 int main() {
     Pexesso myPexeso(5,4);
+    myPexeso.characters();
 
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket < 0) {
@@ -77,7 +104,7 @@ int main() {
 
     sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;               //protokol IPv4
-    serverAddr.sin_port = htons(8081);  // Nastav port
+    serverAddr.sin_port = htons(8080);  // Nastav port
     serverAddr.sin_addr.s_addr = INADDR_ANY;        //
 
     if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {           ///naviaze soceket na adresu a port

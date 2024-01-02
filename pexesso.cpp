@@ -85,7 +85,7 @@ public:
         revealedPairs.clear();
     }
 
-    std::string print() {
+    std::string getPexesso() {
         std::string result;
         result += "    ";
         for (int j = 0; j < columns; ++j) {
@@ -115,9 +115,9 @@ public:
 //    Pexesso pexesso(5,4);
 //    pexesso.characters();
 //}
-/*int 3main() {
+int maino() {
     Pexesso pexesso(5, 4);
-    std::cout << pexesso.print();
+    std::cout << pexesso.getPexesso();
 
     while (!pexesso.allPairsFound()) {
         int row1, col1, row2, col2;
@@ -125,14 +125,14 @@ public:
         std::cin >> row1 >> col1;
 
         pexesso.revealPair(row1, col1);
-        std::cout << pexesso.print();
+        std::cout << pexesso.getPexesso();
         std::this_thread::sleep_for(std::chrono::seconds(2));
 
         std::cout << "Zadajte druhé súradnice (napr. 1 2): ";
         std::cin >> row2 >> col2;
 
         pexesso.revealPair(row2, col2);
-        std::cout << pexesso.print();
+        std::cout << pexesso.getPexesso();
         std::this_thread::sleep_for(std::chrono::seconds(2));
 
         if (pexesso.makeGuess(row1, col1, row2, col2)) {
@@ -146,4 +146,4 @@ public:
     std::cout << "Všetky páry boli nájdené!\n";
 
     return 0;
-}*/
+}

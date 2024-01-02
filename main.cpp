@@ -74,7 +74,12 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
             pexeso.revealPair(x, y);
         }
 
-        if (druhyTah){
+        if (druhyTah) {
+            if (x == x2 && y == y2) {
+                std::cout<<"Zadal si rovnake udaje !\n";
+                pexeso.resetRevealedPairs();
+            }
+            else {
             if (pexeso.makeGuess(x, y, x2, y2)) {
                 std::cout << "Gratulujem, našiel si zhodu!\n";
             } else {
@@ -85,6 +90,7 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
             y2 = 0;
             x = 0;
             y = 0;
+            }
         }
 
         druhyTah = !druhyTah;

@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <cstring>
 #include <unistd.h>
+#include <thread>
 
 class Client {
 public:
@@ -46,17 +47,32 @@ int main() {
 
     char buffer[1024];
     std::string userInput;
+    int druhyTah = 0;
 
-    recv(client.clientSocket, buffer, sizeof(buffer), 0);
-    std::cout << "Prijatá správa od Servera: " << buffer << std::endl;
+
+
     while(userInput != "hraj"){
+        recv(client.clientSocket, buffer, sizeof(buffer), 0);
+        std::cout << "Prijatá správa od Servera: " << buffer << std::endl;
         std::cout << "Zadajte správu pre server: ";
         std::getline(std::cin, userInput);
         client.sendMessage(userInput.c_str());
         //    recv(client.clientSocket, buffer, sizeof(buffer), 0);
 
     }
+    int cislo = 3;
     while(true){
+        druhyTah++;
+        if (druhyTah % cislo == 0){
+            std::cout<<"som v tej metode"<<std::endl;
+            int bytesReceived = recv(client.clientSocket, buffer, sizeof(buffer), 0);
+            buffer[bytesReceived] = '\0';
+            std::cout << "Druhy tah:\n\n " << buffer << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            cislo = 2;
+            druhyTah = 0;
+        }
+
 
         int bytesReceived = recv(client.clientSocket, buffer, sizeof(buffer), 0);
         if (bytesReceived < 0) {

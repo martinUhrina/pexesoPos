@@ -24,11 +24,12 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
 
     while(strcmp(buffer, "hraj") != 0)
     {
-        std::string response = "\n\nAk si pripravey, zadaj ready\n\n";
+        std::string response = "\n\nAk si pripravey, zadaj hraj\n\n";
         send(clientSocket, response.c_str(), response.size(), 0);
+        memset(buffer, 0, sizeof(buffer));
         recv(clientSocket, buffer, sizeof(buffer), 0);
         buffer[bytesReceived1] = '\0';
-        std::cout << "Prijata sprava: " << buffer << std::endl;
+        std::cout << "Prijata spravaaa: " << buffer << std::endl;
     }
 
 
@@ -54,7 +55,7 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
         }
         //kontrola pripojenia
         if (bytesReceived <= 0) {
-            std::cout << "Klient odpojený" << std::endl;
+            std::cout << "Klient "+ player.getName() +" odpojený" << std::endl;
             break;
         }
         buffer[bytesReceived] = '\0';
@@ -70,6 +71,10 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
         std::cout<<"suradnice: "<< x2 << " "<< y2<<std::endl;
         if (druhyTah){
             pexeso.revealPair(x2, y2);
+            std::string response2 = pexeso.getPexesso();
+            // Odpoved klientovi
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            send(clientSocket, response2.c_str(), response2.size(), 0);
         }else{
             pexeso.revealPair(x, y);
         }

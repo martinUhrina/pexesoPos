@@ -45,6 +45,20 @@ public:
             return false;
         }
     }
+    void characters() {
+        std::cout << "    ";
+        for (int j = 0; j < columns; ++j) {
+            std::cout << "  " << j << "   ";
+        }
+        std::cout << '\n';
+        for (int i = 0; i < rows; ++i) {
+            std::cout << " " << i << " | ";
+            for (int j = 0; j < columns; ++j) {
+                std::cout << "| " << board[i][j] << " | ";
+            }
+            std::cout << '\n';
+        }
+    }
 
     bool allPairsFound() {
         return foundPairs.size() == static_cast<std::size_t>(rows * columns);
@@ -92,13 +106,15 @@ public:
 
     void add(char string[1024], int *pInt, int *pInt1) {
         std::cout<<"KOKOTINAAAA: "<<string;
+        std::cout<<"AZ TAK???: "<<string;
     }
 };
 
-void delay(int seconds) {
-    std::this_thread::sleep_for(std::chrono::seconds(seconds));
-}
 
+//int main(){
+//    Pexesso pexesso(5,4);
+//    pexesso.characters();
+//}
 /*int 3main() {
     Pexesso pexesso(5, 4);
     std::cout << pexesso.print();
@@ -110,14 +126,14 @@ void delay(int seconds) {
 
         pexesso.revealPair(row1, col1);
         std::cout << pexesso.print();
-        delay(3);
+        std::this_thread::sleep_for(std::chrono::seconds(2));
 
         std::cout << "Zadajte druhé súradnice (napr. 1 2): ";
         std::cin >> row2 >> col2;
 
         pexesso.revealPair(row2, col2);
         std::cout << pexesso.print();
-        delay(3);
+        std::this_thread::sleep_for(std::chrono::seconds(2));
 
         if (pexesso.makeGuess(row1, col1, row2, col2)) {
             std::cout << "Gratulujem, našiel si zhodu!\n";

@@ -24,12 +24,12 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
 
     while(strcmp(buffer, "hraj") != 0)
     {
-        std::string response = "\n\nAk si pripravey, zadaj hraj\n\n";
+        std::string response = "\n\nAk si pripravený, zadaj hraj\n\n";
         send(clientSocket, response.c_str(), response.size(), 0);
         memset(buffer, 0, sizeof(buffer));
         recv(clientSocket, buffer, sizeof(buffer), 0);
         buffer[bytesReceived1] = '\0';
-        std::cout << "Prijata spravaaa: " << buffer << std::endl;
+        std::cout << "Prijatá sprava: " << buffer << std::endl;
     }
 
 
@@ -55,7 +55,7 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
         }
         //kontrola pripojenia
         if (bytesReceived <= 0) {
-            std::cout << "Klient "+ player.getName() +" odpojený" << std::endl;
+            std::cout << "Klient odpojený" << std::endl;
             break;
         }
         buffer[bytesReceived] = '\0';
@@ -67,8 +67,8 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
         }
 
       //logika hry
-        std::cout<<"SUradnice: "<< x << " "<< y<<std::endl;
-        std::cout<<"suradnice: "<< x2 << " "<< y2<<std::endl;
+        std::cout<<"1.súradnice: "<< x << " "<< y<<std::endl;
+        std::cout<<"2.súradnice: "<< x2 << " "<< y2<<std::endl;
         if (druhyTah){
             pexeso.revealPair(x2, y2);
             std::string response2 = pexeso.getPexesso();
@@ -81,7 +81,7 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
 
         if (druhyTah) {
             if (x == x2 && y == y2) {
-                std::cout<<"Zadal si rovnake udaje !\n";
+                std::cout<<"Zadal si rovnaké údaje !\n";
                 pexeso.resetRevealedPairs();
             }
             else {

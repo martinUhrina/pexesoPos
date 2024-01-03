@@ -23,9 +23,11 @@ public:
     }
     void setScore(int scores){
         score=scores;
+
     }
     void updateScore(int extraPoints){
         score+=extraPoints;
+        std::cout<<"Tvoje skóre bolo navýšené o "<<extraPoints<<std::endl;
     }
     std::string playerInfo(){
         std::string info = "Hráč s menom " + name + " a aktuálnym skóre" + std::to_string(score) + "\n";

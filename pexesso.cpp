@@ -84,6 +84,14 @@ public:
     void resetRevealedPairs() {
         revealedPairs.clear();
     }
+    bool solved(){
+        if(allPairsFound()){
+            std::cout<<"Všetky páry boli nájdené \n";
+            return true;
+        }else {
+            return false;
+        }
+    }
 
     std::string getPexesso() {
         std::string result;

@@ -42,13 +42,11 @@ public:
 
 int main() {
     Client client;
-    client.connectToServer("127.0.0.1", 8080); //IP a port
-    client.sendMessage("Puso");
+    client.connectToServer("127.0.0.1", 8082); //IP a port
+    client.sendMessage("Marcel");
 
     char buffer[1024];
     std::string userInput;
-    int druhyTah = 0;
-
 
 
     while(userInput != "hraj"){
@@ -60,45 +58,30 @@ int main() {
         //    recv(client.clientSocket, buffer, sizeof(buffer), 0);
 
     }
-    int cislo = 3;
+    memset(buffer, 0, sizeof(buffer));
     while(true){
-        druhyTah++;
-        if (druhyTah % cislo == 0){
-            std::cout<<"som v tej metode"<<std::endl;
-            int bytesReceived = recv(client.clientSocket, buffer, sizeof(buffer), 0);
-            buffer[bytesReceived] = '\0';
-            std::cout << "Druhy tah:\n\n " << buffer << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            cislo = 2;
-            druhyTah = 0;
-        }
-
-
+        char buffer[1024];
         int bytesReceived = recv(client.clientSocket, buffer, sizeof(buffer), 0);
         if (bytesReceived < 0) {
-            std::cerr << "Chyba pri prijímaní odpovede";
+            std::cerr << "\nChyba pri prijímaní odpovede";
             return -1;
         } else if (bytesReceived == 0) {
-            std::cout << "Server ukončil spojenie" << std::endl;
+            std::cout << "\nServer ukončil spojenie" << std::endl;
+            break;
         } else {
             buffer[bytesReceived] = '\0';
-            std::cout << "Odpoveď od servera:\n\n " << buffer << std::endl;
+            if (buffer[0] == '%') {
+                std::cout << "\n\nPrijatá správa od servera: \n\n" << buffer + 1 << std::endl; // odstránenie prvého znaku '%'
+                std::cout << "\n\nZadajte suradnice: ";
+                std::getline(std::cin, userInput);
+                const char* message = userInput.c_str();
+                send(client.clientSocket, message, strlen(message), 0);
+            } else if(buffer[0] == '$'){
+                std::cout << "\n\nPrijatá správa od servera:\n\n " << buffer + 1 << std::endl; // odstránenie prvého znaku '%'
+            } else if(buffer[0] == '@'){
+                break;
+            }
         }
-
-        std::string userInput;
-        std::cout << "Zadajte správu pre server Cyklus: ";
-        std::getline(std::cin, userInput);
-
-        const char* message = userInput.c_str();
-        if (send(client.clientSocket, message, strlen(message), 0) < 0) {
-            std::cerr << "Chyba pri odosielaní správy";
-            break;
-        }
-        if (userInput == "end") {
-            std::cout << "Klient žiada ukončenie spojenia" << std::endl;
-            break;
-        }
-
     }
 
 

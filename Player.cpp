@@ -8,9 +8,11 @@ class Player{
 private:
     std::string name;
     int score;
+    std::mutex mtx;
+    int mojePoradie;
 
 public:
-    Player(std::string parName) : name(parName),score(0){};
+    Player(std::string parName, int poradie) : name(parName), score(0), mtx(), mojePoradie(poradie) {}
 
     std::string getName(){
         return name;
@@ -25,9 +27,18 @@ public:
         score=scores;
 
     }
-    void updateScore(int extraPoints){
-        score+=extraPoints;
-        std::cout<<"Tvoje skóre bolo navýšené o "<<extraPoints<<std::endl;
+    std::mutex& getMutex() {
+        return mtx;
+    }
+
+    int getPoradie(){
+        return mojePoradie;
+    }
+
+
+    void updateScore(){
+        score+=2;
+        std::cout<<name<<" bolo navýšené o "<<2<<std::endl;
     }
     std::string playerInfo(){
         std::string info = "Hráč s menom " + name + " a aktuálnym skóre" + std::to_string(score) + "\n";

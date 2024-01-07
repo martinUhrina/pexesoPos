@@ -33,6 +33,9 @@ public:
     }
 
     bool makeGuess(int row1, int col1, int row2, int col2) {
+        if (row1 > rows || row2 > rows || col1 > columns || col2 > columns){
+            return false;
+        }
         if (board[row1][col1] == board[row2][col2]) {
             foundPairs.emplace_back(row1, col1);
             foundPairs.emplace_back(row2, col2);

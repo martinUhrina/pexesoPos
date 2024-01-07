@@ -4,5 +4,6 @@ project(pexeso)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(pexeso main.cpp)
-add_executable(pexeso1 client.cpp)
+add_executable(pexeso1 hrac1.cpp)
+add_executable(pexeso2 hrac2.cpp)
 target_link_libraries(pexeso pthread)

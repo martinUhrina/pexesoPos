@@ -27,13 +27,14 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
     int x = -1, y = -1, x2 = -1, y2 = -1;
     bool druhyTah = false;
     bool endConnection = false;
+    bool potvrdenie = false;
     int bytesReceivedLobby = recv(clientSocket, buffer, sizeof(buffer), 0);
     if (bytesReceivedLobby <= 0) {
         std::cout << "Klient odpojený" << std::endl;
         close(clientSocket);
     }
     buffer[bytesReceivedLobby] = '\0';
-    std::cout << "Pripojil sa: " << buffer << " a moj socket je "<< clientSocket<< std::endl;
+    std::cout << "Pripojil sa: " << buffer << " a jeho socket je "<< clientSocket<< std::endl;
     Player player(buffer, clientThreads.size() - 1);
     std::string response = "\nAhoj " + player.getName() + "\n\nVitaj v hre pexeso \n\n" +"Zadavajete suradnice v tvare(1 1)" +"\nAk si pripravený, zadaj hraj\n\n\0";
     send(clientSocket, response.c_str(), response.size(), 0);
@@ -53,8 +54,6 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
     cout<<"\n"<<player.getName()<<" sa pripojil k hre\n";
     string message;
 
-    memset(buffer, 0, sizeof(buffer));
-    bool potvrdenie = false;
     pocetHracovReady++;
     while (clientThreads.size()  != pocetHracovReady){
         std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -72,6 +71,10 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
 
                 int clientSocketFromAll = clientSockets[i];
                 message = poradieVypis + "\n\n" + pexeso.getPexesso();
+
+                if (pexeso.allPairsFound()){
+                    message = "$Vsetky pary boli najedne\n";
+                }
                 if (i == poradie){
                     if (potvrdenie){
                         message = "%" + message + "\n\n Zadajte a ako potvrdenie: ";
@@ -82,9 +85,6 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
                     message = "$" + message + "\n\n Cakajte";
                 }
                 i++;
-                if (pexeso.allPairsFound()){
-                    message = "$Vsetky pary boli najedne\n";
-                }
                 send(clientSocketFromAll, message.c_str(), message.size(), 0);
             }
         }
@@ -120,7 +120,7 @@ void clientHandler(int clientSocket, Pexesso& pexeso) {
                     if (pexeso.makeGuess(x, y, x2, y2)) {
                         std::cout << "Gratulujem, našiel si zhodu!\n";
                         player.updateScore();
-                     myMap[player.getName()] = player.getScore();
+                        myMap[player.getName()] = player.getScore();
                     } else {
                         std::cout << "Bohužiaľ, toto nie je zhoda.\n";
                         pexeso.resetRevealedPairs();
@@ -192,7 +192,7 @@ int main() {
     serverAddr.sin_port = htons(8083);  // Nastav port
     serverAddr.sin_addr.s_addr = INADDR_ANY;        //
 
-    if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {           ///naviaze soceket na adresu a port
+    if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {           //naviaze soceket na adresu a port
         std::cerr << "Chyba pri naviazaní socketu na port";
         return -1;
     }

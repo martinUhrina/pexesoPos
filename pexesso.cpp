@@ -3,7 +3,6 @@
 #include <ctime>
 #include <cstdlib>
 #include <algorithm>
-#include <chrono>
 #include <thread>
 
 class Pexesso {
@@ -87,14 +86,6 @@ public:
     void resetRevealedPairs() {
         revealedPairs.clear();
     }
-    bool solved(){
-        if(allPairsFound()){
-            std::cout<<"Všetky páry boli nájdené \n";
-            return true;
-        }else {
-            return false;
-        }
-    }
 
     std::string getPexesso() {
         std::string result;
@@ -115,46 +106,4 @@ public:
         return result;
     }
 
-    void add(char string[1024], int *pInt, int *pInt1) {
-        std::cout<<"KOKOTINAAAA: "<<string;
-        std::cout<<"AZ TAK???: "<<string;
-    }
 };
-
-
-//int main(){
-//    Pexesso pexesso(5,4);
-//    pexesso.characters();
-//}
-int maino() {
-    Pexesso pexesso(5, 4);
-    std::cout << pexesso.getPexesso();
-
-    while (!pexesso.allPairsFound()) {
-        int row1, col1, row2, col2;
-        std::cout << "Zadajte prvé súradnice (napr. 0 1): ";
-        std::cin >> row1 >> col1;
-
-        pexesso.revealPair(row1, col1);
-        std::cout << pexesso.getPexesso();
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-
-        std::cout << "Zadajte druhé súradnice (napr. 1 2): ";
-        std::cin >> row2 >> col2;
-
-        pexesso.revealPair(row2, col2);
-        std::cout << pexesso.getPexesso();
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-
-        if (pexesso.makeGuess(row1, col1, row2, col2)) {
-            std::cout << "Gratulujem, našiel si zhodu!\n";
-        } else {
-            std::cout << "Bohužiaľ, toto nie je zhoda.\n";
-            pexesso.resetRevealedPairs();
-        }
-    }
-
-    std::cout << "Všetky páry boli nájdené!\n";
-
-    return 0;
-}

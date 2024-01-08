@@ -13,7 +13,6 @@ private:
 
 public:
     Player(std::string parName, int poradie) : name(parName), score(0), mtx(), mojePoradie(poradie) {}
-    Player(Player& player): name(player.name), score(0), mtx(), mojePoradie(player.mojePoradie){}
 
     std::string getName(){
         return name;
